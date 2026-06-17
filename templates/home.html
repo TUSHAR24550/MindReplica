@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="fade-in center-intro">
+  <center>
+    <a href="{% url 'train_clone' %}" class="primary-btn-link">
+      <button class="primary-btn">Start Your Clone</button>
+    </a>
+  </center>
+
+  <center>
+    <h1>
+      <p class="subheading">Build your AI twin</p>
+    </h1>
+  </center>
+</div>
+
+{% comment %}
+Offline chat page removed for now
+<a href="{% url 'offline_chat' %}" class="noupe-btn">💻 Offline AI Chat</a>
+{% endcomment %}
+
+<div class="noupe-style-container">
+  <div class="left-text">
+    <h2>Ready to build your Mind Replica?</h2>
+    <p>You can start talking to your clone in just a few clicks.</p>
+    <a href="{% url 'chat' %}" class="noupe-btn">Let's Start! →</a>
+    <p class="note-text">It’s free. No brain scan required.</p>
+  </div>
+
+  <div class="right-phone">
+    <img src="{% static 'phone.webp' %}" alt="Phone Interface">
+  </div>
+</div>
+
+<section class="full-width-dark-section fade-in">
+  <div class="container">
+    <h2 class="section-heading">✨ A tiny twin with a big impact</h2>
+    <p class="section-subheading">
+      No training. No scripts. Just upload and chat with your own replica.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-box lime-bg">
+        <h3>🧠 Train Your Clone</h3>
+        <p>Upload your chats, diary entries or voice logs. Your twin learns instantly.</p>
+      </div>
+
+      <div class="feature-box pink-bg">
+        <h3>💬 Talk to Your Twin</h3>
+        <p>Chat live with your mind replica in seconds.</p>
+      </div>
+
+      <div class="feature-box yellow-bg">
+        <h3>📊 See Clone Insights</h3>
+        <p>Understand how your clone perceives you and what it remembers.</p>
+      </div>
+
+      <div class="feature-box purple-bg">
+        <h3>🛠 Manage Persona</h3>
+        <p>Update traits, reset memory, or download your digital twin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

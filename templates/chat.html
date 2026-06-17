@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+ @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .chat-wrapper {
+    min-height: 100vh;
+    background: #0a0a0a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .chat-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .chat-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+
+  .chat-header h1 span {
+    color: #00ff88;
+  }
+
+  .chat-header p {
+    color: #555;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    margin-top: 6px;
+  }
+
+  .chat-container {
+    width: 100%;
+    max-width: 720px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 70vh;
+  }
+
+  .chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-box::-webkit-scrollbar { width: 4px; }
+  .chat-box::-webkit-scrollbar-track { background: #111; }
+  .chat-box::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+  .msg {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.user {
+    align-self: flex-end;
+    background: #00ff88;
+    color: #000;
+    font-weight: 600;
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg.ai {
+    align-self: flex-start;
+    background: #1a1a1a;
+    color: #eee;
+    border: 1px solid #2a2a2a;
+    border-bottom-left-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  .msg.ai.typing {
+    color: #555;
+    font-style: italic;
+  }
+
+  .msg-label {
+    font-size: 0.65rem;
+    font-family: 'Space Mono', monospace;
+    opacity: 0.4;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .chat-input-area {
+    display: flex;
+    gap: 10px;
+    padding: 16px;
+    border-top: 1px solid #1e1e1e;
+    background: #0d0d0d;
+  }
+
+  .chat-input-area input {
+    flex: 1;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .chat-input-area input:focus {
+    border-color: #00ff88;
+  }
+
+  .chat-input-area input::placeholder { color: #444; }
+
+  .send-btn {
+    background: #00ff88;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  .send-btn:hover { opacity: 0.85; }
+  .send-btn:active { transform: scale(0.97); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .empty-state {
+    text-align: center;
+    color: #333;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    margin: auto;
+  }
+
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+</style>
+
+<div class="chat-wrapper">
+  <div class="chat-header">
+    <h1>Mind<span>Replica</span></h1>
+    <p>// your AI twin — trained on your memories</p>
+  </div>
+
+  <div class="chat-container">
+    <div class="chat-box" id="chatBox">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">🧠</div>
+        <p>Start talking to your twin...</p>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <input
+        type="text"
+        id="userInput"
+        placeholder="Say something to your AI twin..."
+        onkeydown="if(event.key==='Enter') sendMessage()"
+      />
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ✅ CSRF token helper
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      document.cookie.split(';').forEach(cookie => {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.slice(name.length + 1));
+        }
+      });
+    }
+    return cookieValue;
+  }
+
+  const csrftoken = getCookie('csrftoken');
+
+  function addMessage(sender, text, isTyping = false) {
+    const chatBox = document.getElementById('chatBox');
+
+    // Hide empty state
+    const emptyState = document.getElementById('emptyState');
+    if (emptyState) emptyState.remove();
+
+    const wrapper = document.createElement('div');
+
+    const label = document.createElement('div');
+    label.className = 'msg-label';
+    label.textContent = sender === 'You' ? 'You' : 'AI Twin';
+
+    const msg = document.createElement('div');
+    msg.className = `msg ${sender === 'You' ? 'user' : 'ai'}${isTyping ? ' typing' : ''}`;
+    msg.innerHTML = text;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(msg);
+    chatBox.appendChild(wrapper);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    return msg; // return so we can update it later
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Show user message
+    addMessage('You', message);
+    input.value = '';
+    sendBtn.disabled = true;
+
+    // Show typing indicator
+    const typingMsg = addMessage('AI Twin', 'typing...', true);
+
+    try {
+      const response = await fetch("{% url 'chat' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken
+        },
+        body: JSON.stringify({ message: message })
+      });
+
+      const data = await response.json();
+
+      // Replace typing with actual reply
+      typingMsg.classList.remove('typing');
+      if (data.reply) {
+        typingMsg.textContent = data.reply;
+      } else {
+        typingMsg.textContent = '⚠️ ' + (data.error || 'Something went wrong');
+      }
+
+    } catch (e) {
+      typingMsg.classList.remove('typing');
+      typingMsg.textContent = '⚠️ Network error. Check your connection.';
+    }
+
+    sendBtn.disabled = false;
+    input.focus();
+  }
+</script>
+
+{% endblock %}

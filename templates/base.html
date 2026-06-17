@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mind Replica</title>
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header>
+    <h1><a href="/">Mind Replica</a></h1>
+    <nav>
+      <ul>
+        <li><a href="{% url 'twin_list' %}">🧠 Explore Twins</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'train_clone' %}">Train</a></li>
+          <li><a href="{% url 'memory_board' %}">My Memories</a></li>
+          <li><a href="{% url 'chat' %}">💬 My Twin</a></li>
+          <li><a href="{% url 'logout' %}"><b>Logout</b></a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}">Login</a></li>
+          <li><a href="{% url 'signup' %}"><b>Sign Up</b></a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% if messages %}
+      <div class="message-container">
+        {% for message in messages %}
+          <div class="alert {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <center><p>&copy; 2025 Mind Replica. All rights reserved.</p></center>
+  </footer>
+
+</body>
+</html>

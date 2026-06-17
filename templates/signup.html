@@ -1,0 +1,21 @@
+<!-- templates/accounts/signup.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-backdrop">
+  <div class="auth-modal">
+    <button class="close-btn" onclick="window.location.href='/'">&times;</button>
+    <h2 class="auth-heading">Sign up for free</h2>
+    <p class="auth-subtext">No training. No scripts. Just one step to begin.</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Username" required><br><br>
+      <input type="email" name="email" placeholder="Email" required><br><br>
+      <input type="password" name="password" placeholder="Password" required><br><br>
+      <button type="submit" class="auth-submit-btn">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  </div>
+</div>
+{% endblock %}

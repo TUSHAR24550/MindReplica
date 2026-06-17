@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="train-wrapper">
+
+  <h2>🧠 Train Your AI Twin</h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <textarea name="text_input" placeholder="Write your diary memory here..."></textarea>
+    <input type="file" name="file_upload">
+    <button type="submit">💾 Save Memory</button>
+  </form>
+
+  <hr>
+
+
+{% endblock %}

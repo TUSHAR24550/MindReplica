@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; padding: 20px;">
+
+    <h2>🧠 AI Twins Directory</h2>
+    <p>Talk to any Ai twin!</p>
+
+    {% if users %}
+        {% for user in users %}
+        <div style="border: 1px solid #ddd; border-radius: 10px; padding: 15px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3>🤖 {{ user.username }}'s Twin</h3>
+                
+            </div>
+            <a href="{% url 'chat_with_twin' user.username %}"
+               style="background: black; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
+                Chat here →
+            </a>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>😕 Abhi koi twin available nahi hai. Pehle train karo!</p>
+        <a href="{% url 'train_clone' %}">→ Train karo</a>
+    {% endif %}
+
+</div>
+{% endblock %}

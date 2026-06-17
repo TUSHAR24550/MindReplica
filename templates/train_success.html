@@ -1,0 +1,8 @@
+<h2>Training Successful! ✅</h2>
+{% if memory.text_input %}
+  <p><strong>Your Text:</strong> {{ memory.text_input }}</p>
+{% endif %}
+{% if memory.file_upload %}
+  <p><strong>File Uploaded:</strong> {{ memory.file_upload.name }}</p>
+{% endif %}
+<a href="/">Go to Home</a>

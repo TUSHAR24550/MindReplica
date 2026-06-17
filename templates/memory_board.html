@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>🧠 Your Memory Board</h2>
+
+{% if memories %}
+    <ul>
+        {% for memory in memories %}
+            <li style="margin-bottom:20px; padding:15px; border:1px solid #ccc; list-style:none;">
+                
+                {% if memory.text_input %}
+                    <p><strong>📝 Text:</strong> {{ memory.text_input }}</p>
+                {% endif %}
+
+                {% if memory.file_upload %}
+                    {% with file_url=memory.file_upload.url|lower %}
+                        {% if ".jpg" in file_url or ".png" in file_url or ".jpeg" in file_url or ".gif" in file_url %}
+                            <img src="{{ memory.file_upload.url }}" width="250" alt="Memory Image">
+                        {% elif ".mp4" in file_url or ".webm" in file_url %}
+                            <video width="320" height="240" controls>
+                                <source src="{{ memory.file_upload.url }}" type="video/mp4">
+                            </video>
+                        {% elif ".mp3" in file_url or ".wav" in file_url %}
+                            <audio controls>
+                                <source src="{{ memory.file_upload.url }}" type="audio/mpeg">
+                            </audio>
+                        {% else %}
+                            <a href="{{ memory.file_upload.url }}" target="_blank">📎 View / Download File</a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+
+                <br>
+                <small>📅 Saved on: {{ memory.created_at }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No memories yet. Go to <a href="{% url 'train_clone' %}">Train Page</a> to add one.</p>
+{% endif %}
+
+{% endblock %}

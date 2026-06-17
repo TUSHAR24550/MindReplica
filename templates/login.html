@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-backdrop">
+  <div class="auth-modal">
+    <button class="close-btn" onclick="window.location.href='/'">&times;</button>
+
+    <img src="{% static 'chatbot-icon.png' %}" class="auth-icon" alt="Chatbot Icon">
+    <h2 class="auth-heading">{% if form.username %}Login{% else %}Sign up for free{% endif %}</h2>
+    <p class="auth-subtext">No training. No scripts. Just one line of code and real conversations begin.</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="auth-submit-btn">
+        {% if form.username %}Login{% else %}Send Verification Code{% endif %}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
