@@ -87,3 +87,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ✅ API Keys
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+
+
+
+import cloudinary
+
+INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dmtsplwgj',
+    'API_KEY': '611914953333253',
+    'API_SECRET': 'WDKdOLfbSpXgR5q3ydeGS-Vah3k',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
